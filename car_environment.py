@@ -36,8 +36,8 @@ color_green = pygame.Color(0, 255, 0)
 color_blue = pygame.Color(0, 0, 255)
 color_grey = pygame.Color(128, 128, 128)
 color_orange = pygame.Color(255, 165, 0)
-color_black = pygame.Color(255, 255, 255)
-color_white = pygame.Color(0,0,0)
+color_black = pygame.Color(0,0,0)
+color_white = pygame.Color(255,255,255)
 
 def convert_coordinates_pymunk_to_pygame(point):
     return point[0], height - point[1]
@@ -158,6 +158,7 @@ class GameState:
         self.space.add(self.car.body, self.car.shape)
 
     def draw_all(self):
+        screen.fill(color_black)
         for wall in self.walls:
             wall.draw()
         for obstacle in self.obstacles:
@@ -216,16 +217,15 @@ class GameState:
         self.car_body.velocity = 100 * driving_direction
 
         # Update the screen and stuff.
-        screen.fill(color_white)
+        #screen.fill(color_black)
 
         #draw(screen)
         self.draw_all()
-    
+        self.space.step(1./FPS)
         if draw_screen:
-            #pygame.display.update()
             pygame.display.flip()
         clock.tick(FPS)
-        self.space.step(1./FPS)
+        
         
         
         # Get the current location and the readings there.
@@ -277,7 +277,7 @@ class GameState:
             self.crashed = False
             for i in range(10):
                 self.car_body.angle += .2  # Turn a little.
-                screen.fill(THECOLORS["grey7"])  # Red is scary!
+                #screen.fill(THECOLORS["grey7"])  # Red is scary!
                 #draw(screen)
                 self.draw_all()
                 self.space.step(1./FPS)

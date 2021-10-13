@@ -1,7 +1,6 @@
 #import car_environment
 import old_env
 #from old_env import GameState as GS
-import old_env
 import numpy as np
 import random
 import csv
@@ -39,7 +38,8 @@ def train_net(model, params, mseloss, optimizer):
     # Create a new game instance.
     #game_state = car_environment.GameState()
 
-    game_state = old_env.GameState(100, False, False)
+    game_state = old_env.GameState(10, False, False)
+    # game_state = old_env.GameState(100, 100, False, False)
     # Get initial state by doing nothing and getting the state.
     _, state = game_state.frame_step((2))
     state = torch.from_numpy(state)

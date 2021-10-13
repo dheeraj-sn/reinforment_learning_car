@@ -17,7 +17,7 @@ screen = pygame.display.set_mode((width, height))
 clock = pygame.time.Clock()
 
 class GameState:
-    def __init__(self, FPS=60, draw_screen=True, show_sensors=True):
+    def __init__(self, FPS=60, clock_FPS = 0,draw_screen=True, show_sensors=True):
         # Global-ish.
         self.crashed = False
 
@@ -32,6 +32,7 @@ class GameState:
         # Record steps.
         self.num_steps = 0
         self.FPS = FPS
+        self.clock_FPS = clock_FPS
         self.draw_screen = draw_screen
         self.show_sensors = show_sensors
         # Create walls.
@@ -124,7 +125,11 @@ class GameState:
         self.space.step(1./self.FPS)
         if self.draw_screen:
             pygame.display.flip()
-        clock.tick(self.FPS)
+        
+        if self.clock_FPS:
+            clock.tick(self.clock_FPS)
+        else:
+            clock.tick()
 
         # Get the current location and the readings there.
         x, y = self.car_body.position
@@ -181,7 +186,10 @@ class GameState:
                 self.space.step(1./self.FPS)
                 if self.draw_screen:
                     pygame.display.flip()
-                clock.tick(self.FPS)
+                if self.clock_FPS:
+                    clock.tick(self.clock_FPS)
+                else:
+                    clock.tick()
 
     def sum_readings(self, readings):
         """Sum the number of non-zero readings."""
@@ -286,7 +294,7 @@ if __name__ == "__main__":
     screen.set_alpha(None)
     run = False
     if run:
-        game_state = GameState(80,True,True)
+        game_state = GameState(60,60,True,True)
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:

@@ -9,25 +9,6 @@ import pymunk
 from pymunk.vec2d import Vec2d
 from pymunk.pygame_util import DrawOptions
 
-# PyGame init
-width = 1000
-height = 700
-left = 0
-right = width -1
-top = 0
-bottom = height - 1
-
-pygame.init()
-screen = pygame.display.set_mode((width, height))
-clock = pygame.time.Clock()
-
-# Turn off alpha since we don't use it.
-screen.set_alpha(None)
-
-# Showing sensors and redrawing slows things down.
-#show_sensors = True
-#draw_screen = True
-
 def convert_coordinates_pymunk_to_pygame(point):
     return point[0], height - point[1]
     # pymunk top,left = 0,0
@@ -289,6 +270,15 @@ class GameState:
             return 1
 
 if __name__ == "__main__":
+    # PyGame init
+    width = 1000
+    height = 700
+    pygame.init()
+    screen = pygame.display.set_mode((width, height))
+    clock = pygame.time.Clock()
+
+    # Turn off alpha since we don't use it.
+    screen.set_alpha(None)
     game_state = GameState(80,True,True)
     while True:
         for event in pygame.event.get():

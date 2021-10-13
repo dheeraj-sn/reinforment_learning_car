@@ -25,8 +25,8 @@ clock = pygame.time.Clock()
 screen.set_alpha(None)
 
 # Showing sensors and redrawing slows things down.
-show_sensors = True
-draw_screen = True
+#show_sensors = True
+#draw_screen = True
 
 def convert_coordinates_pymunk_to_pygame(point):
     return point[0], height - point[1]
@@ -36,7 +36,7 @@ def convert_coordinates_pymunk_to_pygame(point):
     # y changes, i.e. height
 
 class GameState:
-    def __init__(self):
+    def __init__(self, FPS=60, draw_screen=True, show_sensors=True):
         # Global-ish.
         self.crashed = False
 
@@ -49,7 +49,9 @@ class GameState:
 
         # Record steps.
         self.num_steps = 0
-        self.FPS = 60
+        self.FPS = FPS
+        self.draw_screen = draw_screen
+        self.show_sensors = show_sensors
         # Create walls.
         static = [
             pymunk.Segment(
@@ -138,7 +140,7 @@ class GameState:
         self.space.debug_draw(options)
         #draw(screen, self.space)
         self.space.step(1./self.FPS)
-        if draw_screen:
+        if self.draw_screen:
             pygame.display.flip()
         clock.tick(self.FPS)
 
@@ -195,7 +197,7 @@ class GameState:
                 options = pymunk.pygame_util.DrawOptions(screen)
                 self.space.debug_draw(options)
                 self.space.step(1./self.FPS)
-                if draw_screen:
+                if self.draw_screen:
                     pygame.display.flip()
                 clock.tick(self.FPS)
 
@@ -225,7 +227,7 @@ class GameState:
         readings.append(self.get_arm_distance(arm_middle, x, y, angle, 0))
         readings.append(self.get_arm_distance(arm_right, x, y, angle, -0.75))
 
-        if show_sensors:
+        if self.show_sensors:
             pygame.display.update()
 
         return readings
@@ -253,7 +255,7 @@ class GameState:
                 if self.get_track_or_not(obs) != 0:
                     return i
 
-            if show_sensors:
+            if self.show_sensors:
                 pygame.draw.circle(screen, (255, 255, 255), convert_coordinates_pymunk_to_pygame(rotated_p), 2)
 
         # Return the distance for the arm.
@@ -287,7 +289,7 @@ class GameState:
             return 1
 
 if __name__ == "__main__":
-    game_state = GameState()
+    game_state = GameState(80,True,True)
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:

@@ -1,4 +1,7 @@
-import car_environment
+#import car_environment
+import old_env
+#from old_env import GameState as GS
+import old_env
 import numpy as np
 import random
 import csv
@@ -12,7 +15,7 @@ GAMMA = 0.9  # Forgetting.
 TUNING = False  # If False, just use arbitrary, pre-selected params.
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-print("Using devive : ",device)
+print("Using device : ",device)
 
 def train_net(model, params, mseloss, optimizer):
 
@@ -34,8 +37,9 @@ def train_net(model, params, mseloss, optimizer):
     loss_log = []
 
     # Create a new game instance.
-    game_state = car_environment.GameState()
+    #game_state = car_environment.GameState()
 
+    game_state = old_env.GameState(100, False, False)
     # Get initial state by doing nothing and getting the state.
     _, state = game_state.frame_step((2))
     state = torch.from_numpy(state)

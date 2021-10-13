@@ -9,12 +9,12 @@ import pymunk
 from pymunk.vec2d import Vec2d
 from pymunk.pygame_util import DrawOptions
 
-def convert_coordinates_pymunk_to_pygame(point):
-    return point[0], height - point[1]
-    # pymunk top,left = 0,0
-    # pygame bottom,left = 0, 0
-    # x is the same ie width
-    # y changes, i.e. height
+
+width = 1000
+height = 700
+pygame.init()
+screen = pygame.display.set_mode((width, height))
+clock = pygame.time.Clock()
 
 class GameState:
     def __init__(self, FPS=60, draw_screen=True, show_sensors=True):
@@ -27,7 +27,8 @@ class GameState:
 
         # Create the car.
         self.create_car(100, 100, 0.5)
-
+        self.height = 700
+        self.width = 1000
         # Record steps.
         self.num_steps = 0
         self.FPS = FPS
@@ -37,16 +38,16 @@ class GameState:
         static = [
             pymunk.Segment(
                 self.space.static_body,
-                (0, 1), (0, height), 1),
+                (0, 1), (0, self.height), 1),
             pymunk.Segment(
                 self.space.static_body,
-                (1, height), (width, height), 1),
+                (1, self.height), (self.width, self.height), 1),
             pymunk.Segment(
                 self.space.static_body,
-                (width-1, height), (width-1, 1), 1),
+                (self.width-1, self.height), (self.width-1, 1), 1),
             pymunk.Segment(
                 self.space.static_body,
-                (1, 1), (width, 1), 1)
+                (1, 1), (self.width, 1), 1)
         ]
         for s in static:
             s.friction = 1.
@@ -78,7 +79,7 @@ class GameState:
     def create_cat(self):
         inertia = pymunk.moment_for_circle(1, 0, 14, (0, 0))
         self.cat_body = pymunk.Body(1, inertia)
-        self.cat_body.position = 50, height - 100
+        self.cat_body.position = 50, self.height - 100
         self.cat_shape = pymunk.Circle(self.cat_body, 30)
         self.cat_shape.color = THECOLORS["orange"]
         self.cat_shape.elasticity = 1.0
@@ -229,7 +230,7 @@ class GameState:
             # Check if we've hit something. Return the current i (distance)
             # if we did.
             if rotated_p[0] <= 0 or rotated_p[1] <= 0 \
-                    or rotated_p[0] >= width or rotated_p[1] >= height:
+                    or rotated_p[0] >= width or rotated_p[1] >= self.height:
                 return i  # Sensor is off the screen.
             else:
                 obs = screen.get_at(rotated_p)
@@ -237,7 +238,7 @@ class GameState:
                     return i
 
             if self.show_sensors:
-                pygame.draw.circle(screen, (255, 255, 255), convert_coordinates_pymunk_to_pygame(rotated_p), 2)
+                pygame.draw.circle(screen, (255, 255, 255), self.convert_coordinates_pymunk_to_pygame(rotated_p), 2)
 
         # Return the distance for the arm.
         return i
@@ -260,7 +261,7 @@ class GameState:
         y_change = (y_1 - y_2) * math.cos(radians) - \
             (x_1 - x_2) * math.sin(radians)
         new_x = x_change + x_1
-        new_y = height - (y_change + y_1)
+        new_y = self.height - (y_change + y_1)
         return int(new_x), int(new_y)
 
     def get_track_or_not(self, reading):
@@ -268,20 +269,26 @@ class GameState:
             return 0
         else:
             return 1
+    
+    def convert_coordinates_pymunk_to_pygame(self, point):
+        # pymunk top,left = 0,0
+        # pygame bottom,left = 0, 0
+        # x is the same ie width
+        # y changes, i.e. height
+        return point[0], self.height - point[1]
+        
 
 if __name__ == "__main__":
     # PyGame init
-    width = 1000
-    height = 700
-    pygame.init()
-    screen = pygame.display.set_mode((width, height))
-    clock = pygame.time.Clock()
+    
 
     # Turn off alpha since we don't use it.
     screen.set_alpha(None)
-    game_state = GameState(80,True,True)
-    while True:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                exit()
-        game_state.frame_step((random.randint(0, 2)))
+    run = False
+    if run:
+        game_state = GameState(80,True,True)
+        while True:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    exit()
+            game_state.frame_step((random.randint(0, 2)))

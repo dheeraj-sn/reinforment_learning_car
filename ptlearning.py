@@ -38,7 +38,7 @@ def train_net(model, params, mseloss, optimizer):
     # Create a new game instance.
     #game_state = car_environment.GameState()
 
-    game_state = old_env.GameState(10, False, False)
+    game_state = old_env.GameState(FPS=10, draw_screen = False, show_sensor = False)
     # game_state = old_env.GameState(100, 100, False, False)
     # Get initial state by doing nothing and getting the state.
     _, state = game_state.frame_step((2))

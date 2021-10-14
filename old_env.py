@@ -26,7 +26,7 @@ class GameState:
         self.space.gravity = pymunk.Vec2d(0., 0.)
 
         # Create the car.
-        self.create_car(100, 100, 0.5)
+        self.create_car(200, 200, 0.5)
         self.height = 700
         self.width = 1000
         # Record steps.
@@ -69,7 +69,8 @@ class GameState:
         self.create_cat()
 
     def create_obstacle(self, x, y, r):
-        c_body = pymunk.Body(body_type=pymunk.Body.STATIC)
+        #c_body = pymunk.Body(body_type=pymunk.Body.STATIC)
+        c_body = pymunk.Body(body_type=pymunk.Body.KINEMATIC)
         c_shape = pymunk.Circle(c_body, r)
         c_shape.elasticity = 1.0
         c_body.position = x, y

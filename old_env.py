@@ -42,7 +42,7 @@ class GameState:
                 (0, 1), (0, self.height), 1),
             pymunk.Segment(
                 self.space.static_body,
-                (1, self.height), (self.width, self.height), 1),
+                (1, self.height-1), (self.width, self.height-1), 1),
             pymunk.Segment(
                 self.space.static_body,
                 (self.width-1, self.height), (self.width-1, 1), 1),

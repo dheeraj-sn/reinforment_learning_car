@@ -4,7 +4,8 @@ import old_env
 import numpy as np
 import random
 import csv
-from ptnn import neural_net, LossHistory
+#from ptnn import neural_net, LossHistory
+from ptnn import neural_net
 import os.path
 import timeit
 import torch
@@ -38,7 +39,7 @@ def train_net(model, params, mseloss, optimizer):
     # Create a new game instance.
     #game_state = car_environment.GameState()
 
-    game_state = old_env.GameState(FPS=10, draw_screen = False, show_sensor = False)
+    game_state = old_env.GameState(FPS=10, clock_FPS=0 ,draw_screen = False, show_sensors = False)
     # game_state = old_env.GameState(100, 100, False, False)
     # Get initial state by doing nothing and getting the state.
     _, state = game_state.frame_step((2))
@@ -154,7 +155,7 @@ def log_results(filename, data_collect, loss_log):
     with open('results/sonar-frames/loss_data-' + filename + '.csv', 'w') as lf:
         wr = csv.writer(lf)
         for loss_item in loss_log:
-            wr.writerow(loss_item)
+            wr.writerow([loss_item])
 
 def process_minibatch2(minibatch, model):
     # by Microos, improve this batch processing function 
@@ -288,10 +289,10 @@ if __name__ == "__main__":
             launch_learn(param_set)
 
     else:
-        nn_param = [128, 128]
+        nn_param = [1000, 1000]
         params = {
-            "batchSize": 64,
-            "buffer": 50000,
+            "batchSize": 400,
+            "buffer": 10000,
             "nn": nn_param
         }
         model = neural_net(NUM_INPUT, nn_param)

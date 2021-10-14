@@ -23,7 +23,7 @@ def train_net(model, params, mseloss, optimizer):
 
     observe = 1000  # Number of frames to observe before training.
     epsilon = 1
-    train_frames = 100000  # Number of frames to play.
+    train_frames = 250000  # Number of frames to play.
     batchSize = params['batchSize']
     buffer = params['buffer']
 
@@ -289,14 +289,14 @@ if __name__ == "__main__":
             launch_learn(param_set)
 
     else:
-        nn_param = [1000, 1000]
+        nn_param = [512, 512]
         params = {
-            "batchSize": 400,
+            "batchSize": 64,
             "buffer": 10000,
             "nn": nn_param
         }
         model = neural_net(NUM_INPUT, nn_param)
         model = model.to(device)
-        optimizer = torch.optim.RMSprop(model.parameters(),lr=0.05)
+        optimizer = torch.optim.RMSprop(model.parameters(),lr=0.01)
         mseloss = torch.nn.MSELoss()
         train_net(model, params, mseloss, optimizer)

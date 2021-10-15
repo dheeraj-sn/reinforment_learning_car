@@ -26,7 +26,7 @@ class GameState:
         self.space.gravity = pymunk.Vec2d(0., 0.)
 
         # Create the car.
-        self.create_car(200, 200, 0.5)
+        self.create_car(500, 350, 0.5)
         self.height = 700
         self.width = 1000
         # Record steps.
@@ -62,7 +62,7 @@ class GameState:
         # We'll create three and they'll move around to prevent over-fitting.
         self.obstacles = []
         self.obstacles.append(self.create_obstacle(200, 350, 100))
-        self.obstacles.append(self.create_obstacle(700, 200, 125))
+        self.obstacles.append(self.create_obstacle(700, 200 , 125))
         self.obstacles.append(self.create_obstacle(600, 600, 35))
 
         # Create a cat.
@@ -73,6 +73,7 @@ class GameState:
         c_body = pymunk.Body(body_type=pymunk.Body.KINEMATIC)
         c_shape = pymunk.Circle(c_body, r)
         c_shape.elasticity = 1.0
+        c_shape.density = 1
         c_body.position = x, y
         c_shape.color = THECOLORS["blue"]
         self.space.add(c_body, c_shape)
@@ -210,8 +211,8 @@ class GameState:
         """
         # Make our arms.
         arm_left = self.make_sonar_arm(x, y)
-        arm_middle = arm_left
-        arm_right = arm_left
+        arm_middle = list(arm_left)
+        arm_right = list(arm_left)
 
         # Rotate them and get readings.
         readings.append(self.get_arm_distance(arm_left, x, y, angle, 0.75))
@@ -247,7 +248,7 @@ class GameState:
                     return i
 
             if self.show_sensors:
-                pygame.draw.circle(screen, (255, 255, 255), self.convert_coordinates_pymunk_to_pygame(rotated_p), 2)
+                pygame.draw.circle(screen, (255, 255, 255), rotated_p, 2)
 
         # Return the distance for the arm.
         return i
@@ -270,7 +271,8 @@ class GameState:
         y_change = (y_1 - y_2) * math.cos(radians) - \
             (x_1 - x_2) * math.sin(radians)
         new_x = x_change + x_1
-        new_y = self.height - (y_change + y_1)
+        # new_y = self.height - (y_change + y_1)
+        new_y = y_change + y_1
         return int(new_x), int(new_y)
 
     def get_track_or_not(self, reading):
@@ -289,8 +291,6 @@ class GameState:
 
 if __name__ == "__main__":
     # PyGame init
-    
-
     # Turn off alpha since we don't use it.
     screen.set_alpha(None)
     run = False

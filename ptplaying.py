@@ -1,7 +1,3 @@
-"""
-Once a model is learned, use this to play it.
-"""
-
 import car_environment
 import numpy as np
 from ptnn import neural_net

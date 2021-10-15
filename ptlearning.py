@@ -4,7 +4,6 @@ import old_env
 import numpy as np
 import random
 import csv
-#from ptnn import neural_net, LossHistory
 from ptnn import neural_net
 import os.path
 import timeit
@@ -41,9 +40,6 @@ def train_net(model, params, mseloss, optimizer):
     _, state = game_state.frame_step((2))
     state = torch.from_numpy(state)
     state = state.to(device)
-#     print(state)
-#     print(type(state))
-#     exit()
     
     # Let's time it.
     start_time = timeit.default_timer()
@@ -59,15 +55,8 @@ def train_net(model, params, mseloss, optimizer):
             action = np.random.randint(0, 3)  # random
         else:
             # Get Q values for each action.
-#             print(state)
-#             print(type(state))
-#             print(state[0].type())
-#             print(state[0][0].type())
-#             print(state.shape)
-#             state = state.view(state.shape[1])
-#             model = model.float()
             qval = model(state.float())
-            action = (torch.argmax(qval))  # best
+            action = (torch.argmax(qval))  # best value
 
         # Take action, observe new state and get our treat.
         reward, new_state = game_state.frame_step(action)
@@ -91,9 +80,6 @@ def train_net(model, params, mseloss, optimizer):
             # Get training values.
             X_train, y_train = process_minibatch2(minibatch, model)
             # Train the model on this batch.
-#             print(X_train)
-#             print(type(X_train))
-#             exit()
             X_train, y_train = X_train.to(device), y_train.to(device)
             X_train.requires_grad_()
             score = model(X_train)
@@ -101,8 +87,6 @@ def train_net(model, params, mseloss, optimizer):
             loss.backward()
             optimizer.step()
             loss_log.append(loss.detach().item())
-            
-#             print("HISTORY LOSSES %s-----------------------"%history.losses)
 
         # Update the starting state with S'.
         state = new_state
@@ -176,7 +160,6 @@ def process_minibatch2(minibatch, model):
 
     for i, m in enumerate(minibatch):
         old_state_m, action_m, reward_m, new_state_m = m
-#         print(type(old_state_m))
         old_states[i, :] = old_state_m[...]
         actions[i] = action_m
         rewards[i] = reward_m
@@ -192,17 +175,8 @@ def process_minibatch2(minibatch, model):
     y = old_qvals
     non_term_inds = torch.where(rewards != -500)[0]
     term_inds = torch.where(rewards == -500)[0]
-#     print(non_term_inds)
-#     print(actions[non_term_inds])
-#     print(actions[non_term_inds].long())
-#     print(rewards[non_term_inds])
-#     print(maxQs.values)
-#     print()
-#     exit()
-#     print(maxQs[non_term_inds])
     y[non_term_inds, actions[non_term_inds].long()] = rewards[non_term_inds] + (GAMMA * maxQs.values[non_term_inds])
     y[term_inds, actions[term_inds].long()] = rewards[term_inds]
-
     X_train = old_states
     y_train = y
     return X_train, y_train

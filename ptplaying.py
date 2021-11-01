@@ -1,4 +1,5 @@
-import car_environment
+# import car_environment
+import newcarenv as car_environment
 import numpy as np
 from ptnn import neural_net
 import torch
@@ -14,6 +15,9 @@ def play(model):
     # Do nothing to get initial.
     _, state = game_state.frame_step((2))
     state = torch.from_numpy(state)
+    
+    model.eval()
+    
     # Move.
     while True:
         for event in pygame.event.get():

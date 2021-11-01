@@ -1,5 +1,5 @@
 #import car_environment
-import old_env
+import newcarenv as old_env
 #from old_env import GameState as GS
 import numpy as np
 import random
@@ -22,7 +22,7 @@ def train_net(model, params, mseloss, optimizer):
 
     observe = 1000  # Number of frames to observe before training.
     epsilon = 1
-    train_frames = 250000  # Number of frames to play.
+    train_frames = 2000  # Number of frames to play.
     batchSize = params['batchSize']
     buffer = params['buffer']
 
@@ -35,7 +35,7 @@ def train_net(model, params, mseloss, optimizer):
 
     loss_log = []
 
-    game_state = old_env.GameState(FPS=10, clock_FPS=0 ,draw_screen = False, show_sensors = False)
+    game_state = old_env.GameState(FPS=10, clock_FPS=0 ,draw_screen = True, show_sensors = True)
     # Get initial state by doing nothing and getting the state.
     _, state = game_state.frame_step((2))
     state = torch.from_numpy(state)
@@ -43,7 +43,7 @@ def train_net(model, params, mseloss, optimizer):
     
     # Let's time it.
     start_time = timeit.default_timer()
-
+    
     # Run the frames.
     while t < train_frames:
 
@@ -121,18 +121,20 @@ def train_net(model, params, mseloss, optimizer):
             torch.save(model.state_dict(),'saved-models/' + filename + '-' +
                                str(t) + '.pt')
             print("Saving model %s - %d" % (filename, t))
-
+    print(data_collect)
+#     print(loss_log)
+    
     # Log results after we're done all frames.
     log_results(filename, data_collect, loss_log)
 
 
 def log_results(filename, data_collect, loss_log):
     # Save the results to a file so we can graph it later.
-    with open('results/sonar-frames/learn_data-' + filename + '.csv', 'w') as data_dump:
+    with open('results/new-sonar-frames/learn_data-' + filename + '.csv', 'w') as data_dump:
         wr = csv.writer(data_dump)
         wr.writerows(data_collect)
 
-    with open('results/sonar-frames/loss_data-' + filename + '.csv', 'w') as lf:
+    with open('results/new-sonar-frames/loss_data-' + filename + '.csv', 'w') as lf:
         wr = csv.writer(lf)
         for loss_item in loss_log:
             wr.writerow([loss_item])
@@ -215,7 +217,11 @@ def process_minibatch(minibatch, model):
 
 
 def params_to_filename(params):
-    return str(params['nn'][0]) + '-' + str(params['nn'][1]) + '-' + \
+    if(len(params['nn'])<=2):
+        return str(params['nn'][0]) + '-' + str(params['nn'][1]) + '-' + \
+            str(params['batchSize']) + '-' + str(params['buffer'])
+    else:
+        return 'LSTM - ' + str(params['nn'][0]) + '-' + str(params['nn'][1]) + '-' + str(params['nn'][2]) + '-' + \
             str(params['batchSize']) + '-' + str(params['buffer'])
 
 
@@ -223,10 +229,10 @@ def launch_learn(params):
     filename = params_to_filename(params)
     print("Trying %s" % filename)
     # Make sure we haven't run this one.
-    if not os.path.isfile('results/sonar-frames/loss_data-' + filename + '.csv'):
+    if not os.path.isfile('results/new-sonar-frames/loss_data-' + filename + '.csv'):
         # Create file so we don't double test when we run multiple
         # instances of the script at the same time.
-        open('results/sonar-frames/loss_data-' + filename + '.csv', 'a').close()
+        open('results/new-sonar-frames/loss_data-' + filename + '.csv', 'a').close()
         print("Starting test.")
         # Train.
 
@@ -259,7 +265,7 @@ if __name__ == "__main__":
             launch_learn(param_set)
 
     else:
-        nn_param = [512, 512]
+        nn_param = [256, 512, 512]
         params = {
             "batchSize": 400,
             "buffer": 50000,

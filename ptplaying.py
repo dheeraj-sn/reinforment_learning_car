@@ -1,5 +1,5 @@
 # import car_environment
-import newcarenv as car_environment
+import old_env
 import numpy as np
 from ptnn import neural_net
 import torch
@@ -10,7 +10,7 @@ NUM_SENSORS = 3
 def play(model):
 
     car_distance = 0
-    game_state = car_environment.GameState()
+    game_state = old_env.GameState(60,60,True,True)
 
     # Do nothing to get initial.
     _, state = game_state.frame_step((2))
@@ -38,7 +38,7 @@ def play(model):
 
 
 if __name__ == "__main__":
-    saved_model = './saved-models/128-128-64-50000-10000.pt'
-    model = neural_net(NUM_SENSORS, [128, 128])
+    saved_model = './saved-models/LSTM - 256-512-512-32-500-100000.pt'
+    model = neural_net(NUM_SENSORS, [256, 512, 512])
     model.load_state_dict(torch.load(saved_model))
     play(model)

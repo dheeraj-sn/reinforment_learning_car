@@ -1,6 +1,4 @@
-#import car_environment
-import newcarenv as old_env
-#from old_env import GameState as GS
+import old_env
 import numpy as np
 import random
 import csv
@@ -22,7 +20,7 @@ def train_net(model, params, mseloss, optimizer):
 
     observe = 1000  # Number of frames to observe before training.
     epsilon = 1
-    train_frames = 2000  # Number of frames to play.
+    train_frames = 100000  # Number of frames to play.
     batchSize = params['batchSize']
     buffer = params['buffer']
 
@@ -35,7 +33,7 @@ def train_net(model, params, mseloss, optimizer):
 
     loss_log = []
 
-    game_state = old_env.GameState(FPS=10, clock_FPS=0 ,draw_screen = True, show_sensors = True)
+    game_state = old_env.GameState(FPS=10, clock_FPS=0 ,draw_screen = False, show_sensors = False)
     # Get initial state by doing nothing and getting the state.
     _, state = game_state.frame_step((2))
     state = torch.from_numpy(state)
@@ -117,7 +115,7 @@ def train_net(model, params, mseloss, optimizer):
             start_time = timeit.default_timer()
 
         # Save the model every 25,000 frames.
-        if t % 20000 == 0:
+        if t % 25000 == 0:
             torch.save(model.state_dict(),'saved-models/' + filename + '-' +
                                str(t) + '.pt')
             print("Saving model %s - %d" % (filename, t))
@@ -267,8 +265,8 @@ if __name__ == "__main__":
     else:
         nn_param = [256, 512, 512]
         params = {
-            "batchSize": 400,
-            "buffer": 50000,
+            "batchSize": 32,
+            "buffer": 500,
             "nn": nn_param
         }
         model = neural_net(NUM_INPUT, nn_param)

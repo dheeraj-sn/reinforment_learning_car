@@ -117,7 +117,7 @@ def train_net(model, params, mseloss, optimizer):
             start_time = timeit.default_timer()
 
         # Save the model every 25,000 frames.
-        if t % 20000 == 0:
+        if t % 25000 == 0:
             torch.save(model.state_dict(),'saved-models/' + filename + '-' +
                                str(t) + '.pt')
             print("Saving model %s - %d" % (filename, t))

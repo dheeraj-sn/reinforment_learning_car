@@ -98,11 +98,12 @@ def train_net(model, params, mseloss, optimizer):
         # We died, so update stuff.
         if reward == -500:
             # Log the car's distance at this T.
-            data_collect.append([t, car_distance])
+#             data_collect.append([t, car_distance])
 
             # Update max.
             if car_distance > max_car_distance:
                 max_car_distance = car_distance
+            data_collect.append([t, car_distance,max_car_distance])
 
             # Time it.
             tot_time = timeit.default_timer() - start_time

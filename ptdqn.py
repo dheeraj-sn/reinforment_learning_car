@@ -18,4 +18,6 @@ class neural_net(nn.Module):
         z_hat = torch.relu(z)
         z_hat = F.dropout(z_hat, 0.2)
         w = self.layer3(z_hat)
+        print("W shape",w.shape)
+        exit()
         return w

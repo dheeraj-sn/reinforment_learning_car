@@ -98,11 +98,13 @@ def train_net(model, params, mseloss, optimizer):
         # We died, so update stuff.
         if reward == -500:
             # Log the car's distance at this T.
-            data_collect.append([t, car_distance])
+#             data_collect.append([t, car_distance])
 
             # Update max.
             if car_distance > max_car_distance:
                 max_car_distance = car_distance
+            data_collect.append([t, car_distance,max_car_distance])
+#             dist.append([max_car_distance])
 
             # Time it.
             tot_time = timeit.default_timer() - start_time
@@ -125,7 +127,7 @@ def train_net(model, params, mseloss, optimizer):
     # Log results after we're done all frames.
     log_results(filename, data_collect, loss_log)
 
-
+    
 def log_results(filename, data_collect, loss_log):
     # Save the results to a file so we can graph it later.
     with open('results/sonar-frames/learn_data-' + filename + '.csv', 'w') as data_dump:
